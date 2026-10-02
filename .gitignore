@@ -1,0 +1,46 @@
+# Unity generated folders
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Local-only project workspace
+/Assets/_Local/
+/ArtSource/_Local/
+
+# IDE / editor
+/.vs/
+/.idea/
+.vscode/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Crash / temporary files
+sysinfo.txt
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Unity Asset Store tools that should not be versioned
+/Assets/AssetStoreTools*
