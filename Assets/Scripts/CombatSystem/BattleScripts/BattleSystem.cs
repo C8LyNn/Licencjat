@@ -37,6 +37,9 @@ public class BattleSystem : MonoBehaviour
 
     [SerializeField] private List<Action> actionList = new List<Action>();
 
+    public GameObject targetIndicator;
+    private float targetIndicatorHeight = -1f;
+
     void Start()
     {
         enemyPrefabs = EnemyGroup.enemyGroup.enemyList;
@@ -202,14 +205,21 @@ public class BattleSystem : MonoBehaviour
         {
             int damageDealt = (activeUnit.damage - Mathf.RoundToInt(recievingUnits[i].defense / 2));
             recievingUnits[i].currentHP -= damageDealt;
+
             updateHealth?.Invoke();
 
             Debug.Log(activeUnit.name + " dealt " + damageDealt + " to " + recievingUnits[i].name);
         }
     }
 
+    private void ChangeTargetIndicatorPosition()
+    {
+        targetIndicator.transform.position = new Vector3(enemyUnits[targetUnit].transform.position.x, enemyUnits[targetUnit].transform.position.y + targetIndicatorHeight, enemyUnits[targetUnit].transform.position.z);
+    }
     private void PlayerTargeting()
     {
+        targetIndicator.SetActive(true);
+        ChangeTargetIndicatorPosition();
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             if (targetUnit >= enemyUnits.Count - 1)
@@ -220,7 +230,8 @@ public class BattleSystem : MonoBehaviour
             {
                 targetUnit++;
             }
-            Debug.Log("Targeting unit: " + targetUnit);
+            //Debug.Log("Targeting unit: " + targetUnit);
+            ChangeTargetIndicatorPosition();
         }
         if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
@@ -232,13 +243,15 @@ public class BattleSystem : MonoBehaviour
             {
                 targetUnit--;
             }
-            Debug.Log("Targeting unit: " + targetUnit);
+            //Debug.Log("Targeting unit: " + targetUnit);
+            ChangeTargetIndicatorPosition();
         }
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
         {
             activeTargets.Add(enemyUnits[targetUnit]);
 
+            targetIndicator.SetActive(false);
             TurnHandler();
             ActionListHandler(activeAttacker, activeAction, activeTargets);
         }
@@ -332,7 +345,7 @@ public class BattleSystem : MonoBehaviour
         state = BattleState.PLAYERTURN;
         actionList.Clear();
         targetUnit = 0;
-        WinLoseHandle();
+        WinLoseHandler();
         if(state != BattleState.WON || state != BattleState.LOST)
         {
             TurnHandler();
@@ -345,7 +358,7 @@ public class BattleSystem : MonoBehaviour
         playerUnits.Remove(deadUnit);
     }
 
-    private void WinLoseHandle()
+    private void WinLoseHandler()
     {
         if(enemyUnits.Count == 0)
         {

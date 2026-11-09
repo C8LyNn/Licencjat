@@ -193,7 +193,7 @@ GameObject:
   - component: {fileID: 1580434824835257743}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -232,10 +232,13 @@ MonoBehaviour:
   unitLevel: 1
   damage: 15
   defense: 10
+  speed: 0
   maxHP: 200
   currentHP: 200
-  healthText: {fileID: 740505253801820874}
+  maxMP: 0
+  currentMP: 0
   nameText: {fileID: 6533732199303377097}
+  healthText: {fileID: 740505253801820874}
 --- !u!1 &816944378558981447
 GameObject:
   m_ObjectHideFlags: 0
