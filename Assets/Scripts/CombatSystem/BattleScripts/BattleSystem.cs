@@ -3,21 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine.UI;
+using System.Net;
 
-public enum BattleState {START, PLAYERTURN, TARGETING, ENEMYTURN, WON, LOST }
+public enum BattleState { START, PLAYERTURN, TARGETING, ENEMYTURN, ENDTURN, WON, LOST }
+
+public enum ActionType { ATTACK, GUARD }
 public class BattleSystem : MonoBehaviour
 {
     public BattleState state;
 
-    public List<GameObject> playerPrefabs;
-    public List<GameObject> enemyPrefabs;
+    private List<GameObject> playerPrefabs;
+    private List<GameObject> enemyPrefabs;
 
     public List<Transform> playerBattlePositions;
     public List<Transform> enemyBattlePositions;
 
-    public List<Unit> playerUnits;
-    public List<Unit> enemyUnits;
-    public int targetUnit;
+    public List<Unit> playerUnits = new List<Unit>();
+    public List<Unit> enemyUnits = new List<Unit>();
+    private int targetUnit;
 
     public delegate void UpdateHealth();
     public static UpdateHealth updateHealth;
@@ -25,8 +28,15 @@ public class BattleSystem : MonoBehaviour
     public List<GameObject> playerOptions;
     private int playerOptionNumber = 0;
 
-    private int turnNumber;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private int turnNumber = -1;
+
+    private Unit activeAttacker;
+    private ActionType activeAction;
+    public List<Unit> activeTargets = new List<Unit>();
+    public int activeAttackerNumber;
+
+    [SerializeField] private List<Action> actionList = new List<Action>();
+
     void Start()
     {
         enemyPrefabs = EnemyGroup.enemyGroup.enemyList;
@@ -36,9 +46,16 @@ public class BattleSystem : MonoBehaviour
 
         OptionButtonUpdate();
         StartCoroutine(SetupBattle());
+        TurnHandler();
+
+        Unit.unitDied += UpdateUnitLists;
     }
 
-    // Update is called once per frame
+    private void OnDestroy()
+    {
+        Unit.unitDied -= UpdateUnitLists;
+    }
+
     void Update()
     {
         if (state == BattleState.PLAYERTURN)
@@ -49,6 +66,10 @@ public class BattleSystem : MonoBehaviour
         {
             PlayerTargeting();
         }
+        if (state == BattleState.ENEMYTURN)
+        {
+            TurnHandler();
+        }
     }
 
     IEnumerator SetupBattle()
@@ -58,6 +79,7 @@ public class BattleSystem : MonoBehaviour
             if (enemyPrefabs[i] != null)
             {
                 GameObject enemyGO = Instantiate(enemyPrefabs[i], enemyBattlePositions[i]);
+                enemyGO.name = "Enemy" + i;
                 enemyGO.transform.localPosition = new Vector3(0, 1, 0);
                 enemyUnits.Add(enemyGO.GetComponent<Unit>());
             }
@@ -68,22 +90,22 @@ public class BattleSystem : MonoBehaviour
             if (playerPrefabs[i] != null)
             {
                 GameObject playerGO = Instantiate(playerPrefabs[i], playerBattlePositions[i]);
+                playerGO.name = "Ally" + i;
                 playerGO.transform.localPosition = new Vector3(0, 1, 0);
                 playerUnits.Add(playerGO.GetComponent<Unit>());
             }
 
         }
+        state = BattleState.PLAYERTURN;
 
-
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.01f);
 
         turnNumber = 0;
-        state = BattleState.PLAYERTURN;
         Debug.Log("Current battlestate: " + state);
         PlayerTurn();
     }
-
-    private void PlayerOptionSelecting()
+    #region OptionSelecting
+    private void PlayerOptionSelecting() //Detecting player input for choosing player options
     {
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
@@ -147,19 +169,20 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
-    IEnumerator OptionButtonActivate()
+    IEnumerator OptionButtonActivate() //Option outcomes
     {
         if (playerOptionNumber == 0)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.01f);
             state = BattleState.TARGETING;
+            activeAction = ActionType.ATTACK;
         }
         else
         {
             Debug.Log("Button Nr." + playerOptionNumber + " is currently in development");
         }
     }
-    private void OptionButtonUpdate()
+    private void OptionButtonUpdate() //Visual representation of currently chosen button
     {
         playerOptions[playerOptionNumber].GetComponent<Image>().color = new Color(0, 255, 255);
         for (int i = 0; i < playerOptions.Count; i++)
@@ -170,17 +193,19 @@ public class BattleSystem : MonoBehaviour
             }
         }
     }
+    #endregion
 
-    private void PlayerAttack()
+    #region AttackFunctions
+    private void PlayerAttack(Unit activeUnit, List<Unit> recievingUnits)
     {
-        int damageDealt = (playerUnits[0].damage - Mathf.RoundToInt(enemyUnits[targetUnit].defense / 2));
-        enemyUnits[targetUnit].currentHP -= damageDealt;
-        updateHealth?.Invoke();
+        for (int i = 0; i < recievingUnits.Count; i++)
+        {
+            int damageDealt = (activeUnit.damage - Mathf.RoundToInt(recievingUnits[i].defense / 2));
+            recievingUnits[i].currentHP -= damageDealt;
+            updateHealth?.Invoke();
 
-        Debug.Log("Dealt " + damageDealt + " to " + enemyUnits[targetUnit].name);
-
-
-        state = BattleState.PLAYERTURN;
+            Debug.Log(activeUnit.name + " dealt " + damageDealt + " to " + recievingUnits[i].name);
+        }
     }
 
     private void PlayerTargeting()
@@ -212,66 +237,120 @@ public class BattleSystem : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
         {
-            PlayerAttack();
-        }
-        /*bool isDead = enemyUnit.TakeDamage(playerUnit.damage);
+            activeTargets.Add(enemyUnits[targetUnit]);
 
-        yield return new WaitForSeconds(1f);
-
-        if (isDead)
-        {
-            state = BattleState.WON;
-            EndBattle();
+            TurnHandler();
+            ActionListHandler(activeAttacker, activeAction, activeTargets);
         }
-        else
-        {
-            state = BattleState.ENEMYTURN;
-            StartCoroutine(EnemyTurn());
-        }*/
     }
-
-    /*void EndBattle()
-    {
-        if(state == BattleState.WON)
-        {
-            Debug.Log("Battle Won");
-        }
-        else if (state == BattleState.LOST)
-        {
-            Debug.Log("Battle Lost");
-        }
-    }*/
     private void PlayerTurn()
     {
         Debug.Log("ChooseAction");
     }
 
-    /*IEnumerator EnemyTurn()
+    #endregion
+
+    private void TurnHandler()
     {
-        Debug.Log("EnemyAttacks");
-
-        yield return new WaitForSeconds(1f);
-
-        bool isDead = playerUnit.TakeDamage(enemyUnit.damage);
-
-        yield return new WaitForSeconds(1f);
-
-        if (isDead)
+        if (activeAttackerNumber < playerUnits.Count && state == BattleState.TARGETING) //Switching active party member when it's player's turn
         {
-            state = BattleState.LOST;
-            EndBattle();
-        }
-        else
-        {
-            state = BattleState.PLAYERTURN;
-            PlayerTurn();
-        }
-    }*/
+            if (state == BattleState.TARGETING)
+            {
+                activeAttacker = playerUnits[activeAttackerNumber];
+                activeAttackerNumber++;
+                if (activeAttackerNumber == playerUnits.Count)
+                {
+                    activeAttackerNumber = -1;
+                    state = BattleState.ENEMYTURN;
+                }
+                else
+                {
+                    state = BattleState.PLAYERTURN;
+                    Debug.Log("Another Player's turn");
+                }
 
-    /*public void OnAttackButton()
+            }
+        }
+        else if (activeAttackerNumber < enemyUnits.Count && state == BattleState.ENEMYTURN) //Switching active enemy unit when it's enemy's turn
+        {
+            activeAttackerNumber++;
+            if (activeAttackerNumber == enemyUnits.Count)
+            {
+                activeAttackerNumber = -1;
+                state = BattleState.ENDTURN;
+                TurnHandler();
+            }
+            if (state == BattleState.ENEMYTURN)
+            {
+                Debug.Log(activeAttacker + " atakuje!");
+            }
+
+        }
+        else if (state == BattleState.ENDTURN)
+        {
+            activeAttackerNumber = 0;
+            turnNumber++;
+            ActionListExecute();
+            Debug.Log("KONIEC TURY: " + turnNumber);
+        }
+    }
+
+    [System.Serializable]
+    public class Action
     {
-        if (state != BattleState.PLAYERTURN) return;
+        public Unit actionSender;
+        public ActionType actionType;
+        public List<Unit> actionsRecievers = new List<Unit>();
+    }
 
-        StartCoroutine(PlayerAttack());
-    }*/
+
+    private void ActionListHandler(Unit aAttacker, ActionType aAction, List<Unit> aRecievers) //Adds actions to the list and sorts every attack based on unit speed PRIORITY: Guard > Buff > Attack/Debuff
+    {
+        Action currentAction = new Action();
+        currentAction.actionSender = aAttacker;
+        currentAction.actionType = aAction;
+
+        for (int i = 0; i < aRecievers.Count; i++)
+        {
+            currentAction.actionsRecievers.Add(aRecievers[i]);
+        }
+
+        actionList.Add(currentAction);
+        activeTargets.Clear();
+    }
+
+    private void ActionListExecute() //Sorts every attack based on unit speed (guards are always first, doesn't matter if it's the enemy or player), 
+    {
+        foreach (Action action in actionList)
+        {
+            for (int i = 0; i < action.actionsRecievers.Count; i++)
+            {
+                PlayerAttack(action.actionSender, action.actionsRecievers);
+            }
+        }
+        activeAttackerNumber = 0;
+        state = BattleState.PLAYERTURN;
+        actionList.Clear();
+        targetUnit = 0;
+        WinLoseHandle();
+        if(state != BattleState.WON || state != BattleState.LOST)
+        {
+            TurnHandler();
+        }
+    }
+
+    private void UpdateUnitLists(Unit deadUnit)
+    {
+        enemyUnits.Remove(deadUnit);
+        playerUnits.Remove(deadUnit);
+    }
+
+    private void WinLoseHandle()
+    {
+        if(enemyUnits.Count == 0)
+        {
+            state = BattleState.WON;
+            Debug.Log("Wygra³eœ walke");
+        }
+    }
 }

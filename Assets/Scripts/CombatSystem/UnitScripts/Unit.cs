@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -8,12 +9,18 @@ public class Unit : MonoBehaviour
 
     public int damage;
     public int defense;
+    public int speed;
 
     public int maxHP;
     public int currentHP;
 
+    public int maxMP;
+    public int currentMP;
+
     public TextMeshPro nameText;
     public TextMeshPro healthText;
+
+    public static event Action<Unit> unitDied;
 
 
 
@@ -26,6 +33,7 @@ public class Unit : MonoBehaviour
 
     private void OnDestroy()
     {
+        
         BattleSystem.updateHealth -= CheckHealth;
     }
 
@@ -50,6 +58,7 @@ public class Unit : MonoBehaviour
         if (currentHP <= 0)
         {
             Destroy(gameObject);
+            unitDied?.Invoke(this);
         }
     }
 }
