@@ -263,6 +263,7 @@ public class BattleSystem : MonoBehaviour
 
     #endregion
 
+    #region Turn and Post Turn handling
     private void TurnHandler()
     {
         if (activeAttackerNumber < playerUnits.Count && state == BattleState.TARGETING) //Switching active party member when it's player's turn
@@ -346,7 +347,7 @@ public class BattleSystem : MonoBehaviour
         actionList.Clear();
         targetUnit = 0;
         WinLoseHandler();
-        if(state != BattleState.WON || state != BattleState.LOST)
+        if (state != BattleState.WON || state != BattleState.LOST)
         {
             TurnHandler();
         }
@@ -360,10 +361,12 @@ public class BattleSystem : MonoBehaviour
 
     private void WinLoseHandler()
     {
-        if(enemyUnits.Count == 0)
+        if (enemyUnits.Count == 0)
         {
             state = BattleState.WON;
             Debug.Log("Wygra³eœ walke");
         }
     }
+
+    #endregion
 }
