@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Sciana wewnetrzna
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
-  m_Sprite: {fileID: -6601691336363857274, guid: 7a1fb9a44e557a94a8e9434315770aa9, type: 3}
-  m_Color: {r: 0.3647059, g: 0.39215687, b: 0.4392157, a: 1}
+  m_Sprite: {fileID: 21300000, guid: b1bd5ecfbf2fe8a46a7dd50cc855f700, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
     e01: 0
