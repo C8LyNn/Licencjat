@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector]
     public static string previousScene;
+    [HideInInspector]
+    public static int previousID;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -78,8 +80,11 @@ public class PlayerController : MonoBehaviour
         {
             if (sc.sceneToGo == previousScene)
             {
-                gameObject.transform.position = sc.transform.position;
-                movePoint.transform.position = sc.transform.position;
+                if (sc.teleportID == previousID)
+                {
+                    gameObject.transform.position = sc.transform.position;
+                    movePoint.transform.position = sc.transform.position;
+                }
             }
         }
     }
@@ -90,6 +95,7 @@ public class PlayerController : MonoBehaviour
         {
             canTeleport = false;
             previousScene = other.GetComponent<SceneChanger>().sceneName;
+            previousID = other.GetComponent<SceneChanger>().teleportID;
             SceneManager.LoadScene(other.GetComponent<SceneChanger>().sceneToGo);
         }
     }
