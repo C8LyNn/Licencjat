@@ -360,7 +360,7 @@ public class BattleSystem : MonoBehaviour
         actionList.Clear();
         targetUnit = 0;
         WinLoseHandler();
-        if (state != BattleState.WON || state != BattleState.LOST)
+        if (state != BattleState.WON && state != BattleState.LOST)
         {
             TurnHandler();
         }
