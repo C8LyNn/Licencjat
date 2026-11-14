@@ -10,6 +10,11 @@ public class PlayerController : MonoBehaviour
     public Transform movePoint;
     public LayerMask stopsMovement;
 
+    public bool leftHitbox = false;
+    public bool rightHitbox = false;
+    public bool upHitbox = false;
+    public bool downHitbox = false;
+
     #endregion
 
     #region Interaction Variables
@@ -32,7 +37,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         movePoint.parent = null;
         SceneManager.activeSceneChanged += SetPlayerPositionOnSceneChange;
@@ -48,50 +53,143 @@ public class PlayerController : MonoBehaviour
         PlayerMovement();
     }
 
+    #region Movement
     private void PlayerMovement()
     {
         transform.position = Vector3.MoveTowards(transform.position, movePoint.position, moveSpeed * Time.deltaTime);
 
         if (Vector3.Distance(transform.position, movePoint.position) == 0f)
         {
+            CheckForObstacles();
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
             {
                 playerInteractor.offset = new Vector2(0.5f, 0f);
-                if (!Physics2D.OverlapCircle(movePoint.position + Vector3.right, .2f, stopsMovement))
+                if (!rightHitbox)
                 {
-                    movePoint.position += Vector3.right;
+                    MoveRight();
                 }
-
+                
             }
 
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             {
                 playerInteractor.offset = new Vector2(-0.5f, 0f);
-                if (!Physics2D.OverlapCircle(movePoint.position + Vector3.left, .2f, stopsMovement))
+                if (!leftHitbox)
                 {
-                    movePoint.position += Vector3.left;
+                    MoveLeft();
                 }
+                
             }
 
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
                 playerInteractor.offset = new Vector2(0f, 0.5f);
-                if (!Physics2D.OverlapCircle(movePoint.position + Vector3.up, .2f, stopsMovement))
+                if (!upHitbox)
                 {
-                    movePoint.position += Vector3.up;
+                    MoveUp();
                 }
             }
 
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
             {
                 playerInteractor.offset = new Vector2(0f, -0.5f);
-                if (!Physics2D.OverlapCircle(movePoint.position + Vector3.down, .2f, stopsMovement))
+                if (!downHitbox)
                 {
-                    movePoint.position += Vector3.down;
+                    MoveDown();
                 }
             }
         }
     }
+
+    private void MoveRight()
+    {
+        if (!Physics2D.OverlapCircle(movePoint.position + Vector3.right, .2f, stopsMovement))
+        {
+            movePoint.position += Vector3.right;
+        }
+    }
+
+    private void MoveLeft()
+    {
+        if (!Physics2D.OverlapCircle(movePoint.position + Vector3.left, .2f, stopsMovement))
+        {
+            movePoint.position += Vector3.left;
+        }
+    }
+
+    private void MoveUp()
+    {
+        
+        if (!Physics2D.OverlapCircle(movePoint.position + Vector3.up, .2f, stopsMovement))
+        {
+            movePoint.position += Vector3.up;
+        }
+    }
+
+    private void MoveDown()
+    {
+        
+        if (!Physics2D.OverlapCircle(movePoint.position + Vector3.down, .2f, stopsMovement))
+        {
+            movePoint.position += Vector3.down;
+        }
+    }
+
+    private void CheckForObstacles()
+    {
+
+        RaycastHit2D raycastLeft = Physics2D.Raycast(gameObject.transform.position, Vector3.left, 1f, stopsMovement);
+        if (raycastLeft)
+        {
+            leftHitbox = true;
+            //Debug.Log("left hit");
+        }
+        else
+        {
+            leftHitbox = false;
+        }
+
+        RaycastHit2D raycastRight = Physics2D.Raycast(gameObject.transform.position, Vector3.right, 1f, stopsMovement);
+        if (raycastRight)
+        {
+            rightHitbox = true;
+            //Debug.Log("right hit");
+        }
+        else
+        {
+            rightHitbox = false;
+        }
+
+        RaycastHit2D raycastUp = Physics2D.Raycast(gameObject.transform.position, Vector3.up, 1f, stopsMovement);
+        if (raycastUp)
+        {
+            upHitbox = true;
+            //Debug.Log("up hit");
+        }
+        else
+        {
+            upHitbox = false;
+        }
+
+        RaycastHit2D raycastDown = Physics2D.Raycast(gameObject.transform.position, Vector3.down, 1f, stopsMovement);
+        if (raycastDown)
+        {
+            downHitbox = true;
+            //Debug.Log("down hit");
+        }
+        else
+        {
+            downHitbox = false;
+        }
+
+        /*Debug.DrawRay(gameObject.transform.position, Vector3.down, Color.red);
+        Debug.DrawRay(gameObject.transform.position, Vector3.up, Color.red);
+        Debug.DrawRay(gameObject.transform.position, Vector3.left, Color.red);
+        Debug.DrawRay(gameObject.transform.position, Vector3.right, Color.red);*/
+        
+    }
+
+    #endregion
 
     #region Teleport Logic
     private void SetPlayerPositionOnSceneChange(Scene oldScene, Scene newScene)
