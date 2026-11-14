@@ -4,7 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    #region Movement Variables
+    #region Movement Data
+    [Header("Movement Data")]
 
     public float moveSpeed = 5f;
     public Transform movePoint;
@@ -17,13 +18,14 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    #region Interaction Variables
-
+    #region Interaction Data
+    [Header("Interaction Data")]
     public BoxCollider2D playerInteractor;
 
     #endregion
 
-    #region Teleport Variables
+    #region Teleport Data
+    [Header("Teleport Data")]
 
     [SerializeField]
     private bool canTeleport = true;
@@ -33,6 +35,20 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector]
     public static int previousID;
+
+    #endregion
+
+    #region Camera Data
+    [Header("Camera Data")]
+
+    [SerializeField] private CameraManager camManager;
+
+    #endregion
+
+    #region Debug Data
+    [Header("Debug Data")]
+
+    public Transform debugPlayerTransform;
 
     #endregion
 
@@ -68,7 +84,7 @@ public class PlayerController : MonoBehaviour
                 {
                     MoveRight();
                 }
-                
+
             }
 
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
@@ -78,7 +94,7 @@ public class PlayerController : MonoBehaviour
                 {
                     MoveLeft();
                 }
-                
+
             }
 
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
@@ -119,7 +135,7 @@ public class PlayerController : MonoBehaviour
 
     private void MoveUp()
     {
-        
+
         if (!Physics2D.OverlapCircle(movePoint.position + Vector3.up, .2f, stopsMovement))
         {
             movePoint.position += Vector3.up;
@@ -128,7 +144,7 @@ public class PlayerController : MonoBehaviour
 
     private void MoveDown()
     {
-        
+
         if (!Physics2D.OverlapCircle(movePoint.position + Vector3.down, .2f, stopsMovement))
         {
             movePoint.position += Vector3.down;
@@ -186,7 +202,7 @@ public class PlayerController : MonoBehaviour
         Debug.DrawRay(gameObject.transform.position, Vector3.up, Color.red);
         Debug.DrawRay(gameObject.transform.position, Vector3.left, Color.red);
         Debug.DrawRay(gameObject.transform.position, Vector3.right, Color.red);*/
-        
+
     }
 
     #endregion
@@ -194,6 +210,7 @@ public class PlayerController : MonoBehaviour
     #region Teleport Logic
     private void SetPlayerPositionOnSceneChange(Scene oldScene, Scene newScene)
     {
+        StartCoroutine(SetupCamera());
         foreach (SceneChanger sc in GameManager.teleportList)
         {
             if (sc.sceneToGo == previousScene)
@@ -229,6 +246,47 @@ public class PlayerController : MonoBehaviour
         {
             StartCoroutine(TeleportCooldown());
         }
+    }
+
+    #endregion
+
+    #region Camera Functions
+
+    private void FindCameraManager()
+    {
+        if (camManager == null)
+        {
+            camManager = FindFirstObjectByType<CameraManager>();
+        }
+        else Debug.Log("Camera manager already set");
+    }
+    private void SetupCameraConfiner()
+    {
+        CameraConfinerProvider provider = FindFirstObjectByType<CameraConfinerProvider>();
+        if (provider != null)
+        {
+            camManager.SetConfiner(provider.confiner);
+        }
+        else Debug.Log("No camera confiner in scene");
+    }
+
+    private void SetupCameraTarget()
+    {
+        Transform transform = gameObject.transform;
+        debugPlayerTransform = transform;
+        if (transform != null)
+        {
+            camManager.SetTrackingTarget(transform);
+        }
+        else Debug.Log("No available tracking target in scene");
+    }
+
+    private IEnumerator SetupCamera()
+    {
+        yield return null;
+        FindCameraManager();
+        SetupCameraConfiner();
+        SetupCameraTarget();
     }
 
     #endregion

@@ -3,7 +3,7 @@ using UnityEngine;
 public class DontDestroy : MonoBehaviour
 {
     [SerializeField]
-    private static GameObject[] persistentObjects = new GameObject[2];
+    private static GameObject[] persistentObjects = new GameObject[3];
     public int objectIndex;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -15,7 +15,7 @@ public class DontDestroy : MonoBehaviour
         }
         else if (persistentObjects[objectIndex] != gameObject)
         {
-            Destroy(gameObject);
+            DestroyImmediate(gameObject);
         }
     }
 }
