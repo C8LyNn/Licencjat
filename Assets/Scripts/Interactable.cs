@@ -3,6 +3,7 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
     public string interactableName;
+    public MonoBehaviour scriptToActivate;
 
     private void Awake()
     {
@@ -16,7 +17,7 @@ public class Interactable : MonoBehaviour
 
     public void OnInteract()
     {
-        DebugFunction();
+        scriptToActivate.SendMessage("ActivateThis");
     }
 
     private void DebugFunction()

@@ -614,8 +614,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1215592674}
   - component: {fileID: 1215592673}
-  - component: {fileID: 1215592672}
   - component: {fileID: 1215592675}
+  - component: {fileID: 1215592672}
+  - component: {fileID: 1215592676}
   m_Layer: 6
   m_Name: InteractableObject
   m_TagString: Untagged
@@ -636,6 +637,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable
   interactableName: Szafka
+  scriptToActivate: {fileID: 1215592676}
 --- !u!212 &1215592673
 SpriteRenderer:
   serializedVersion: 2
@@ -756,6 +758,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1215592676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1215592671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31afb812096f82445963c539d61f2f56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionTester
 --- !u!1 &1527185609
 GameObject:
   m_ObjectHideFlags: 0
@@ -983,8 +997,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2083350014}
   - component: {fileID: 2083350013}
-  - component: {fileID: 2083350012}
   - component: {fileID: 2083350011}
+  - component: {fileID: 2083350012}
+  - component: {fileID: 2083350015}
   m_Layer: 6
   m_Name: InteractableObject (1)
   m_TagString: Untagged
@@ -1051,6 +1066,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable
   interactableName: "Szafka wy\u017Cej"
+  scriptToActivate: {fileID: 2083350015}
 --- !u!212 &2083350013
 SpriteRenderer:
   serializedVersion: 2
@@ -1125,6 +1141,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2083350015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083350010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 546adc75513a4f84480361df128e3151, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionTest2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
