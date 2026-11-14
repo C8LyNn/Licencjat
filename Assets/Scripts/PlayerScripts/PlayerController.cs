@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         movePoint.parent = null;
         SceneManager.activeSceneChanged += SetPlayerPositionOnSceneChange;
@@ -61,31 +61,48 @@ public class PlayerController : MonoBehaviour
         if (Vector3.Distance(transform.position, movePoint.position) == 0f)
         {
             CheckForObstacles();
-            if ((Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) && !rightHitbox)
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
             {
-                MoveRight();
+                playerInteractor.offset = new Vector2(0.5f, 0f);
+                if (!rightHitbox)
+                {
+                    MoveRight();
+                }
+                
             }
 
-            if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) && !leftHitbox)
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             {
-                MoveLeft();
+                playerInteractor.offset = new Vector2(-0.5f, 0f);
+                if (!leftHitbox)
+                {
+                    MoveLeft();
+                }
+                
             }
 
-            if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && !upHitbox)
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
-                MoveUp();
+                playerInteractor.offset = new Vector2(0f, 0.5f);
+                if (!upHitbox)
+                {
+                    MoveUp();
+                }
             }
 
-            if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && !downHitbox)
+            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
             {
-                MoveDown();
+                playerInteractor.offset = new Vector2(0f, -0.5f);
+                if (!downHitbox)
+                {
+                    MoveDown();
+                }
             }
         }
     }
 
     private void MoveRight()
     {
-        playerInteractor.offset = new Vector2(0.5f, 0f);
         if (!Physics2D.OverlapCircle(movePoint.position + Vector3.right, .2f, stopsMovement))
         {
             movePoint.position += Vector3.right;
@@ -94,7 +111,6 @@ public class PlayerController : MonoBehaviour
 
     private void MoveLeft()
     {
-        playerInteractor.offset = new Vector2(-0.5f, 0f);
         if (!Physics2D.OverlapCircle(movePoint.position + Vector3.left, .2f, stopsMovement))
         {
             movePoint.position += Vector3.left;
@@ -103,7 +119,7 @@ public class PlayerController : MonoBehaviour
 
     private void MoveUp()
     {
-        playerInteractor.offset = new Vector2(0f, 0.5f);
+        
         if (!Physics2D.OverlapCircle(movePoint.position + Vector3.up, .2f, stopsMovement))
         {
             movePoint.position += Vector3.up;
@@ -112,7 +128,7 @@ public class PlayerController : MonoBehaviour
 
     private void MoveDown()
     {
-        playerInteractor.offset = new Vector2(0f, -0.5f);
+        
         if (!Physics2D.OverlapCircle(movePoint.position + Vector3.down, .2f, stopsMovement))
         {
             movePoint.position += Vector3.down;

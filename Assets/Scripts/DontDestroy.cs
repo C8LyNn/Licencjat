@@ -1,6 +1,4 @@
-using NUnit.Framework;
 using UnityEngine;
-using System.Collections.Generic;
 
 public class DontDestroy : MonoBehaviour
 {
@@ -8,7 +6,7 @@ public class DontDestroy : MonoBehaviour
     private static GameObject[] persistentObjects = new GameObject[2];
     public int objectIndex;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Awake()
+    void Start()
     {
         if (persistentObjects[objectIndex] == null)
         {
@@ -20,6 +18,4 @@ public class DontDestroy : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-
 }
