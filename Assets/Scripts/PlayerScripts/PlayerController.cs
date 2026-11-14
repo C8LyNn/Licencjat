@@ -4,17 +4,32 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    #region Movement Variables
+
     public float moveSpeed = 5f;
     public Transform movePoint;
     public LayerMask stopsMovement;
+
+    #endregion
+
+    #region Interaction Variables
+
+    public BoxCollider2D playerInteractor;
+
+    #endregion
+
+    #region Teleport Variables
 
     [SerializeField]
     private bool canTeleport = true;
 
     [HideInInspector]
     public static string previousScene;
+
     [HideInInspector]
     public static int previousID;
+
+    #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -41,6 +56,7 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
             {
+                playerInteractor.offset = new Vector2(0.5f, 0f);
                 if (!Physics2D.OverlapCircle(movePoint.position + Vector3.right, .2f, stopsMovement))
                 {
                     movePoint.position += Vector3.right;
@@ -50,6 +66,7 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             {
+                playerInteractor.offset = new Vector2(-0.5f, 0f);
                 if (!Physics2D.OverlapCircle(movePoint.position + Vector3.left, .2f, stopsMovement))
                 {
                     movePoint.position += Vector3.left;
@@ -58,6 +75,7 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
+                playerInteractor.offset = new Vector2(0f, 0.5f);
                 if (!Physics2D.OverlapCircle(movePoint.position + Vector3.up, .2f, stopsMovement))
                 {
                     movePoint.position += Vector3.up;
@@ -66,6 +84,7 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
             {
+                playerInteractor.offset = new Vector2(0f, -0.5f);
                 if (!Physics2D.OverlapCircle(movePoint.position + Vector3.down, .2f, stopsMovement))
                 {
                     movePoint.position += Vector3.down;
@@ -74,6 +93,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    #region Teleport Logic
     private void SetPlayerPositionOnSceneChange(Scene oldScene, Scene newScene)
     {
         foreach (SceneChanger sc in GameManager.teleportList)
@@ -112,4 +132,6 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(TeleportCooldown());
         }
     }
+
+    #endregion
 }

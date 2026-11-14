@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
             foreach (SceneChanger teleport in teleportParent.GetComponentsInChildren<SceneChanger>())
             {
                 teleportList.Add(teleport);
-                Debug.Log("GAMEMANAGER: " + teleport.sceneToGo);
+                //Debug.Log("GAMEMANAGER: " + teleport.sceneToGo);
             }
         }
         else Debug.Log("Teleport parent object not set in GameManager");
