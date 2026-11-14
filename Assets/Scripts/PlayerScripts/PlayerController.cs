@@ -126,7 +126,7 @@ public class PlayerController : MonoBehaviour
         if (raycastLeft)
         {
             leftHitbox = true;
-            Debug.Log("left hit");
+            //Debug.Log("left hit");
         }
         else
         {
@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour
         if (raycastRight)
         {
             rightHitbox = true;
-            Debug.Log("right hit");
+            //Debug.Log("right hit");
         }
         else
         {
@@ -148,7 +148,7 @@ public class PlayerController : MonoBehaviour
         if (raycastUp)
         {
             upHitbox = true;
-            Debug.Log("up hit");
+            //Debug.Log("up hit");
         }
         else
         {
@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour
         if (raycastDown)
         {
             downHitbox = true;
-            Debug.Log("down hit");
+            //Debug.Log("down hit");
         }
         else
         {
