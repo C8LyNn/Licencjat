@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine.UI;
 using System.Net;
+using UnityEngine.UIElements;
 
 public enum BattleState { START, PLAYERTURN, TARGETING, ENEMYTURN, ENDTURN, WON, LOST }
 
@@ -105,7 +106,6 @@ public class BattleSystem : MonoBehaviour
 
         turnNumber = 0;
         Debug.Log("Current battlestate: " + state);
-        PlayerTurn();
     }
     #region OptionSelecting
     private void PlayerOptionSelecting() //Detecting player input for choosing player options
@@ -174,11 +174,15 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator OptionButtonActivate() //Option outcomes
     {
-        if (playerOptionNumber == 0)
+        if (playerOptionNumber == 0) //ATTACK
         {
             yield return new WaitForSeconds(0.01f);
             state = BattleState.TARGETING;
             activeAction = ActionType.ATTACK;
+        }
+        else if (playerOptionNumber == 1) //GUARD
+        {
+            //ActionGuard();
         }
         else
         {
@@ -187,19 +191,19 @@ public class BattleSystem : MonoBehaviour
     }
     private void OptionButtonUpdate() //Visual representation of currently chosen button
     {
-        playerOptions[playerOptionNumber].GetComponent<Image>().color = new Color(0, 255, 255);
+        playerOptions[playerOptionNumber].GetComponent<UnityEngine.UI.Image>().color = new Color(0, 255, 255);
         for (int i = 0; i < playerOptions.Count; i++)
         {
             if (i != playerOptionNumber)
             {
-                playerOptions[i].GetComponent<Image>().color = new Color(255, 255, 255);
+                playerOptions[i].GetComponent<UnityEngine.UI.Image>().color = new Color(255, 255, 255);
             }
         }
     }
     #endregion
 
     #region AttackFunctions
-    private void PlayerAttack(Unit activeUnit, List<Unit> recievingUnits)
+    private void ActionAttack(Unit activeUnit, List<Unit> recievingUnits)
     {
         for (int i = 0; i < recievingUnits.Count; i++)
         {
@@ -256,12 +260,14 @@ public class BattleSystem : MonoBehaviour
             ActionListHandler(activeAttacker, activeAction, activeTargets);
         }
     }
-    private void PlayerTurn()
-    {
-        Debug.Log("ChooseAction");
-    }
+
 
     #endregion
+
+    private void ActionGuard(Unit activeUnit)
+    {
+        activeUnit.defense += Mathf.RoundToInt(activeUnit.defense * 1.8f);
+    }
 
     #region Turn and Post Turn handling
     private void TurnHandler()
@@ -337,9 +343,16 @@ public class BattleSystem : MonoBehaviour
     {
         foreach (Action action in actionList)
         {
-            for (int i = 0; i < action.actionsRecievers.Count; i++)
+            if (action.actionType == ActionType.ATTACK) //WHAT TO DO WHEN THE ACTION IS ATTACK
             {
-                PlayerAttack(action.actionSender, action.actionsRecievers);
+                for (int i = 0; i < action.actionsRecievers.Count; i++)
+                {
+                    ActionAttack(action.actionSender, action.actionsRecievers);
+                }
+            }
+            else if(action.actionType == ActionType.GUARD)
+            {
+                //ActionGuard();
             }
         }
         activeAttackerNumber = 0;
@@ -347,7 +360,7 @@ public class BattleSystem : MonoBehaviour
         actionList.Clear();
         targetUnit = 0;
         WinLoseHandler();
-        if (state != BattleState.WON || state != BattleState.LOST)
+        if (state != BattleState.WON && state != BattleState.LOST)
         {
             TurnHandler();
         }
