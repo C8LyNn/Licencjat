@@ -338,7 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15367976723feab4fa47c78446146c64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
-  sceneToGo: TestScene1
+  sceneToGo: LayerTest_TestScene1
   teleportID: 1
   sceneName: 
 --- !u!212 &390419628
@@ -430,7 +430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15367976723feab4fa47c78446146c64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
-  sceneToGo: TestScene1
+  sceneToGo: LayerTest_TestScene1
   teleportID: 0
   sceneName: 
 --- !u!212 &399452536
@@ -703,7 +703,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15367976723feab4fa47c78446146c64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneChanger
-  sceneToGo: TestScene2
+  sceneToGo: LayerTest_TestScene2
   teleportID: 0
   sceneName: 
 --- !u!1 &606733011

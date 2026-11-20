@@ -13,9 +13,10 @@ public class SceneChanger : MonoBehaviour
     {
         sceneName = SceneManager.GetActiveScene().name;
 
-        if (sceneToGo == "" && SceneManager.GetActiveScene().name != "NoSceneSet")
+        if (sceneToGo == "" && SceneManager.GetActiveScene().name != "LayerNull_NoSceneSet")
         {
-            sceneToGo = "NoSceneSet";
+            sceneToGo = "LayerNull_NoSceneSet";
+            Debug.LogWarning("Teleport -" + gameObject.name + "- at: (X:" + transform.position.x + " Y:" + transform.position.y + ") is not set");
         }
         else if (sceneToGo == "" ) sceneToGo = PlayerController.previousScene;
 
