@@ -5,6 +5,10 @@ public class Interactable : MonoBehaviour
     public string interactableName;
     public MonoBehaviour scriptToActivate;
 
+    [Header("Interaction Type")]
+    public bool onClick;
+    public bool onWalkIn;
+
     private void Awake()
     {
         if (!gameObject.GetComponent<BoxCollider2D>()) //adds box collider if it doesn't exist

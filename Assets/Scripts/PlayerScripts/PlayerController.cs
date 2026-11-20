@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     #region Interaction Data
     [Header("Interaction Data")]
     public BoxCollider2D playerInteractor;
+    public GameObject playerInteractorSprite;
 
     #endregion
 
@@ -79,7 +80,12 @@ public class PlayerController : MonoBehaviour
             CheckForObstacles();
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
             {
+                if(playerInteractorSprite != null)
+                {
+                    playerInteractorSprite.transform.position = gameObject.transform.position + new Vector3(0.5f, 0f, 0f);
+                }
                 playerInteractor.offset = new Vector2(0.5f, 0f);
+
                 if (!rightHitbox)
                 {
                     MoveRight();
@@ -89,7 +95,12 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             {
+                if (playerInteractorSprite != null)
+                {
+                    playerInteractorSprite.transform.position = gameObject.transform.position + new Vector3(-0.5f, 0f, 0f);
+                }
                 playerInteractor.offset = new Vector2(-0.5f, 0f);
+
                 if (!leftHitbox)
                 {
                     MoveLeft();
@@ -99,7 +110,12 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
+                if(playerInteractorSprite != null)
+                {
+                    playerInteractorSprite.transform.position = gameObject.transform.position + new Vector3(0f, 0.5f, 0f);
+                }
                 playerInteractor.offset = new Vector2(0f, 0.5f);
+
                 if (!upHitbox)
                 {
                     MoveUp();
@@ -108,7 +124,12 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
             {
+                if (playerInteractorSprite != null)
+                {
+                    playerInteractorSprite.transform.position = gameObject.transform.position + new Vector3(0f, -0.5f, 0f);
+                }
                 playerInteractor.offset = new Vector2(0f, -0.5f);
+
                 if (!downHitbox)
                 {
                     MoveDown();
