@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,15 +27,11 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Teleport Data
-    [Header("Teleport Data")]
 
-    [SerializeField]
-    private bool canTeleport = true;
+    public static bool canTeleport = true;
 
-    [HideInInspector]
     public static string previousScene;
 
-    [HideInInspector]
     public static int previousID;
 
     #endregion
@@ -80,7 +77,7 @@ public class PlayerController : MonoBehaviour
             CheckForObstacles();
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
             {
-                if(playerInteractorSprite != null)
+                if (playerInteractorSprite != null)
                 {
                     playerInteractorSprite.transform.position = gameObject.transform.position + new Vector3(0.5f, 0f, 0f);
                 }
@@ -110,7 +107,7 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
-                if(playerInteractorSprite != null)
+                if (playerInteractorSprite != null)
                 {
                     playerInteractorSprite.transform.position = gameObject.transform.position + new Vector3(0f, 0.5f, 0f);
                 }
@@ -228,7 +225,7 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    #region Teleport Logic
+    #region On Scene Change Logic
     private void SetPlayerPositionOnSceneChange(Scene oldScene, Scene newScene)
     {
         StartCoroutine(SetupCamera());
@@ -245,17 +242,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.GetComponent<SceneChanger>() && canTeleport)
-        {
-            canTeleport = false;
-            previousScene = other.GetComponent<SceneChanger>().sceneName;
-            previousID = other.GetComponent<SceneChanger>().teleportID;
-            SceneManager.LoadScene(other.GetComponent<SceneChanger>().sceneToGo);
-        }
-    }
-
     IEnumerator TeleportCooldown()
     {
         yield return new WaitForSeconds(0.1f);
@@ -263,9 +249,24 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.GetComponent<SceneChanger>())
+        if(other.GetComponent<Interactable>() != null)
         {
-            StartCoroutine(TeleportCooldown());
+            if (other.GetComponent<Interactable>().onWalkIn)
+            {
+                StartCoroutine(TeleportCooldown());
+            }
+        }
+    }
+
+    #endregion
+
+    #region Interaction Logic
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.GetComponent<Interactable>() && other.GetComponent<Interactable>().onWalkIn)
+        {
+            other.GetComponent<Interactable>().OnInteract();
         }
     }
 
@@ -308,6 +309,33 @@ public class PlayerController : MonoBehaviour
         FindCameraManager();
         SetupCameraConfiner();
         SetupCameraTarget();
+    }
+
+    #endregion
+
+    #region Teleporter Logic
+
+    public void TeleportTo(GameObject teleport, Vector3? coordinates)
+    {
+        if (canTeleport)
+        {
+            if (coordinates != null)
+            {
+                gameObject.transform.position = coordinates.Value;
+                movePoint.transform.position = coordinates.Value;
+                canTeleport = false;
+            }
+            else if (teleport != null)
+            {
+                gameObject.transform.position = teleport.transform.position;
+                movePoint.transform.position = teleport.transform.position;
+                canTeleport = false;
+            }
+            else
+            {
+                Debug.LogWarning("Empty teleporter. Set another with the same teleportID or set coordinates");
+            }
+        }
     }
 
     #endregion

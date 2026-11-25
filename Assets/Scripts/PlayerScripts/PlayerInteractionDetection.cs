@@ -7,7 +7,7 @@ public class PlayerInteractionDetection : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.GetComponent<Interactable>())
+        if (collider.GetComponent<Interactable>() && collider.GetComponent<Interactable>().onClick)
         {
             Debug.Log("Interacting with: " + collider.GetComponent<Interactable>().interactableName);
             interact += collider.GetComponent<Interactable>().OnInteract;
@@ -16,7 +16,7 @@ public class PlayerInteractionDetection : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collider)
     {
-        if (collider.GetComponent<Interactable>())
+        if (collider.GetComponent<Interactable>() && collider.GetComponent<Interactable>().onClick)
         {
             interact -= collider.GetComponent<Interactable>().OnInteract;
         }

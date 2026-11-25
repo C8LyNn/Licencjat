@@ -1,10 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SceneChanger : MonoBehaviour
 {
     public string sceneToGo;
     public int teleportID;
+
+    public enum layer {Floor0, Floor1, Floor2, Floor3};
+    [SerializeField] layer layerToGo;
 
     [HideInInspector]
     public string sceneName;
@@ -18,7 +22,7 @@ public class SceneChanger : MonoBehaviour
             sceneToGo = "LayerNull_NoSceneSet";
             Debug.LogWarning("Teleport -" + gameObject.name + "- at: (X:" + transform.position.x + " Y:" + transform.position.y + ") is not set");
         }
-        else if (sceneToGo == "" ) sceneToGo = PlayerController.previousScene;
+        else if (sceneToGo == "") sceneToGo = PlayerController.previousScene;
 
         if (!gameObject.GetComponent<BoxCollider2D>()) //adds box collider if it doesn't exist
         {
@@ -26,5 +30,21 @@ public class SceneChanger : MonoBehaviour
             gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
         }
         else if (gameObject.GetComponent<BoxCollider2D>().isTrigger == false) gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+    }
+
+    private void ActivateThis()
+    {
+        TeleportToScene();
+    }
+
+    private void TeleportToScene()
+    {
+        if (PlayerController.canTeleport)
+        {
+            PlayerController.canTeleport = false;
+            PlayerController.previousScene = sceneName;
+            PlayerController.previousID = teleportID;
+            SceneManager.LoadScene(sceneToGo);
+        }
     }
 }

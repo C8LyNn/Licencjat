@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
-    public string interactableName;
-    public MonoBehaviour scriptToActivate;
+    [SerializeField] public string interactableName;
+    [SerializeField] public MonoBehaviour scriptToActivate;
 
     [Header("Interaction Type")]
-    public bool onClick;
-    public bool onWalkIn;
+    [SerializeField] public bool onClick;
+    [SerializeField] public bool onWalkIn;
 
     private void Awake()
     {
@@ -17,6 +17,19 @@ public class Interactable : MonoBehaviour
             gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
         }
         else if (gameObject.GetComponent<BoxCollider2D>().isTrigger == false) gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+ 
+        if(interactableName == "")
+        {
+            interactableName = gameObject.name;
+        }
+    }
+
+    private void Start()
+    {
+        if(!onClick && !onWalkIn)
+        {
+            Debug.LogWarning("Interactable --" + gameObject.name + "-- (X:" + gameObject.transform.position.x + "Y:" + gameObject.transform.position.y + ") has no set Interaction Type");
+        }
     }
 
     public void OnInteract()
