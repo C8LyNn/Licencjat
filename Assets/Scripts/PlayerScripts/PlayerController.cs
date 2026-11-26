@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public Transform movePoint;
     public LayerMask stopsMovement;
+    public bool canMove;
 
     public bool leftHitbox = false;
     public bool rightHitbox = false;
@@ -28,11 +30,16 @@ public class PlayerController : MonoBehaviour
 
     #region Teleport Data
 
+
     public static bool canTeleport = true;
 
     public static string previousScene;
-
     public static int previousID;
+
+    [Header("Teleport Data")]
+
+    public Image fadeImage;
+    public float fadeTimeInSeconds;
 
     #endregion
 
@@ -44,9 +51,9 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Debug Data
-    [Header("Debug Data")]
+    //[Header("Debug Data")]
 
-    public Transform debugPlayerTransform;
+    //public Transform debugPlayerTransform;
 
     #endregion
 
@@ -57,6 +64,11 @@ public class PlayerController : MonoBehaviour
         SceneManager.activeSceneChanged += SetPlayerPositionOnSceneChange;
     }
 
+    private void Start()
+    {
+        canMove = true;
+    }
+
     private void OnDestroy()
     {
         SceneManager.activeSceneChanged -= SetPlayerPositionOnSceneChange;
@@ -64,7 +76,10 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        PlayerMovement();
+        if (canMove)
+        {
+            PlayerMovement();
+        }
     }
 
     #region Movement
@@ -240,6 +255,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+        StartCoroutine(FadeOutImage());
     }
 
     IEnumerator TeleportCooldown()
@@ -249,13 +265,34 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if(other.GetComponent<Interactable>() != null)
+        if (other.GetComponent<Interactable>() != null)
         {
             if (other.GetComponent<Interactable>().onWalkIn)
             {
                 StartCoroutine(TeleportCooldown());
             }
         }
+    }
+
+    public IEnumerator FadeInImage()
+    {
+
+        canMove = false;
+        for (float i = 0; i <= 100; i++)
+        {
+            fadeImage.color = new Color(0, 0, 0, i / 100);
+            yield return new WaitForSeconds(fadeTimeInSeconds / 2 / 100);
+        }
+    }
+
+    public IEnumerator FadeOutImage()
+    {
+        for (float i = 100; i >= 0; i--)
+        {
+            fadeImage.color = new Color(0, 0, 0, i / 100);
+            yield return new WaitForSeconds(fadeTimeInSeconds / 2 / 100);
+        }
+        canMove = true;
     }
 
     #endregion
@@ -295,7 +332,7 @@ public class PlayerController : MonoBehaviour
     private void SetupCameraTarget()
     {
         Transform transform = gameObject.transform;
-        debugPlayerTransform = transform;
+        //debugPlayerTransform = transform;
         if (transform != null)
         {
             camManager.SetTrackingTarget(transform);

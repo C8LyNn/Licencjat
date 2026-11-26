@@ -5,8 +5,9 @@ public class DontDestroy : MonoBehaviour
     [SerializeField]
     private static GameObject[] persistentObjects = new GameObject[3];
     public int objectIndex;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         if (persistentObjects[objectIndex] == null)
         {

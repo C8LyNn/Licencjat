@@ -344,4 +344,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1c13fe055968c5469ee53ec60e77446, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraManager
-  cCamera: {fileID: 6810174895284153442}
+  cCamera: {fileID: 0}

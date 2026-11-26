@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -34,13 +35,15 @@ public class SceneChanger : MonoBehaviour
 
     private void ActivateThis()
     {
-        TeleportToScene();
+        StartCoroutine(TeleportToScene());
     }
 
-    private void TeleportToScene()
+    private IEnumerator TeleportToScene()
     {
         if (PlayerController.canTeleport)
         {
+            StartCoroutine(FindFirstObjectByType<PlayerController>().FadeInImage());
+            yield return new WaitForSeconds(FindFirstObjectByType<PlayerController>().fadeTimeInSeconds / 2 + 0.5f);
             PlayerController.canTeleport = false;
             PlayerController.previousScene = sceneName;
             PlayerController.previousID = teleportID;

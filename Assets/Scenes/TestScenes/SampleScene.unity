@@ -554,8 +554,8 @@ MonoBehaviour:
   playerList:
   - {fileID: 432535856153594032, guid: 3d7824b631800964cb96ff4bde0590c2, type: 3}
   - {fileID: 4629509968960361800, guid: 0e129609f8b556d44919bd642950a3c1, type: 3}
-  - {fileID: 0}
   - {fileID: 4629509968960361800, guid: 0e129609f8b556d44919bd642950a3c1, type: 3}
+  - {fileID: 0}
 --- !u!1 &1559171742
 GameObject:
   m_ObjectHideFlags: 0
